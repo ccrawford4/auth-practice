@@ -3,18 +3,14 @@
 // import ScaleLoader from "react-spinners/ScaleLoader";
 import React /* { memo }*/ from "react";
 import { useSession } from "next-auth/react";
-import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 // Wrap ScaleLoader with React.memo
 // const MemoizedScaleLoader = memo(ScaleLoader);
 
 export default function Home() {
   const { data: session } = useSession();
-
-  const handleSignInFlow = (provider: string) => {
-    console.log("Sign in with: ", provider);
-    signIn(provider, { callbackUrl: "/" });
-  };
+  const router = useRouter();
 
   const getFirstName = (name: string | null | undefined) => {
     if (!name) {
@@ -26,22 +22,16 @@ export default function Home() {
     return "";
   }
 
+  React.useEffect(() => {
+    if (!session) {
+      console.log("Not logged in. Redirecting to login page...");
+      router.push("/login");
+    }
+  });
+
   return (
     <div className="h-screen flex items-center justify-center">
-      {session ? (
-        <>
-          Welcome {getFirstName(session.user?.name)}!
-        </>
-      ) : (
-        <>
-          Not Logged In
-          <button
-            onClick={() => handleSignInFlow("github")}
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-          >Sign in
-          </button>
-        </>
-      )}
+      Welcome to the home page {getFirstName(session?.user?.name)}!
     </div>
   );
 }
