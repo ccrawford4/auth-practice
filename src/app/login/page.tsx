@@ -14,7 +14,7 @@ export default function SignIn() {
             console.log("Already logged in. Redirecting to home page...");
             router.push("/");
         }
-    }, [status, router]);
+    }, [session, status, router]);
 
 
     if (status === "loading") {

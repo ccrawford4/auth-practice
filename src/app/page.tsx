@@ -24,7 +24,7 @@ export default function Home() {
       console.log("Not logged in. Redirecting to login page...");
       router.push("/login");
     }
-  }, [session, router]);
+  }, [session, status, router]);
 
   if (status === "loading") {
     return <div>Loading...</div>;
