@@ -1,8 +1,27 @@
 "use client";
 
-import { signIn } from "next-auth/react";
+import React, { useEffect } from "react";
+import { signIn, useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 export default function SignIn() {
+    const { data: session, status } = useSession();
+    const router = useRouter();
+
+    useEffect(()=> {
+        console.log("Session: ", session);
+        if (status === "authenticated") {
+            console.log("Already logged in. Redirecting to home page...");
+            router.push("/");
+        }
+    }, [status, router]);
+
+
+    if (status === "loading") {
+        return <div>Loading...</div>;
+    }
+
+
     const handleSignInFlow = (provider: string) => {
         console.log("Sign in with: ", provider);
         signIn(provider, { callbackUrl: "/" });
