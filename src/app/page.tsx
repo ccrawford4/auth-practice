@@ -1,15 +1,11 @@
 "use client";
 
-// import ScaleLoader from "react-spinners/ScaleLoader";
-import React /* { memo }*/ from "react";
+import React from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
-// Wrap ScaleLoader with React.memo
-// const MemoizedScaleLoader = memo(ScaleLoader);
-
 export default function Home() {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const router = useRouter();
 
   const getFirstName = (name: string | null | undefined) => {
@@ -23,11 +19,16 @@ export default function Home() {
   }
 
   React.useEffect(() => {
-    if (!session) {
+    console.log("Session: ", session);
+    if (status === "unauthenticated") {
       console.log("Not logged in. Redirecting to login page...");
       router.push("/login");
     }
-  });
+  }, [session, router]);
+
+  if (status === "loading") {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="h-screen flex items-center justify-center">
