@@ -3,24 +3,32 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "concurrently \"next dev\" \"node server.js\"",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
   },
   "dependencies": {
-    "react": "19.0.0-rc-02c0e824-20241028",
-    "react-dom": "19.0.0-rc-02c0e824-20241028",
-    "next": "15.0.2"
+    "@emotion/react": "^11.13.3",
+    "@emotion/styled": "^11.13.0",
+    "@mui/icons-material": "^6.1.4",
+    "@mui/material": "^6.1.4",
+    "@types/node": "22.7.7",
+    "next": "14.2.15",
+    "next-auth": "^4.24.8",
+    "react": "^18",
+    "react-dom": "^18",
+    "react-spinners": "^0.14.1",
+    "socket.io": "^4.8.1",
+    "socket.io-client": "^4.8.1"
   },
   "devDependencies": {
-    "typescript": "^5",
-    "@types/node": "^20",
+    "@types/node": "22.7.7",
     "@types/react": "^18",
-    "@types/react-dom": "^18",
-    "postcss": "^8",
-    "tailwindcss": "^3.4.1",
+    "concurrently": "^9.0.1",
     "eslint": "^8",
-    "eslint-config-next": "15.0.2"
+    "eslint-config-next": "14.2.15",
+    "tailwindcss": "^3.4.1",
+    "typescript": "^5"
   }
 }
