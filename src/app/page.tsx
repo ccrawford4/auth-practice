@@ -2,14 +2,14 @@
 
 import React, { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
+// import { useRouter } from "next/navigation";
 import io from "socket.io-client";
 
 const socket = io("http://localhost:3001"); // Move socket initialization outside the component to avoid re-connecting
 
 export default function Home() {
   const { data: session, status } = useSession();
-  const router = useRouter();
+  // const router = useRouter();
   const [messages, setMessages] = useState<string[]>([]);
   const [inputValue, setInputValue] = useState<string>("");
   const [activeUsers, setActiveUsers] = useState<string[]>([]);
@@ -19,12 +19,12 @@ export default function Home() {
     return name.split(" ")[0];
   };
 
-  // Redirect unauthenticated users to login page
-  useEffect(() => {
-    if (status === "unauthenticated") {
-      router.push("/login");
-    }
-  }, [status, router]);
+  // // Redirect unauthenticated users to login page
+  // useEffect(() => {
+  //   if (status === "unauthenticated") {
+  //     router.push("/login");
+  //   }
+  // }, [status, router]);
 
   // Socket event listeners for real-time updates
   useEffect(() => {

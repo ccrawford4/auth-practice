@@ -18,7 +18,9 @@ io.on('connection', (socket) => {
     console.log('Message received:', msg);
 
     // Send a response back to the client
-    socket.emit('message', `Server received: ${msg}`);
+    // socket.emit('message', `Server received: ${msg}`);
+    // socket.broadcast.emit('message', `Server received: ${msg}`);
+    io.emit('message', `Server received: ${msg}`);
   });
 
   // Handle disconnection
