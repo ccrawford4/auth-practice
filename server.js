@@ -21,6 +21,11 @@ io.on('connection', (socket) => {
     // socket.emit('message', `Server received: ${msg}`);
     // socket.broadcast.emit('message', `Server received: ${msg}`);
     io.emit('message', `Server received: ${msg}`);
+
+    socket.on('transcription', (data) => {
+      console.log('Transcription received:', data);
+      socket.broadcast.emit('transcription', data);
+    })
   });
 
   // Handle disconnection

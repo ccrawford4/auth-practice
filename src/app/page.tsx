@@ -3,9 +3,14 @@
 import React, { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { createClient, LiveTranscriptionEvents } from "@deepgram/sdk";
+import fetch from "cross-fetch";
+import dotenv from "dotenv";
+dotenv.config()
 import io from "socket.io-client";
 
-const socket = io("http://localhost:3001"); // Move socket initialization outside the component to avoid re-connecting
+const url = "http://localhost:3001";
+const socket = io(url); // Move socket initialization outside the component to avoid re-connecting
 
 export default function Home() {
   const { data: session, status } = useSession();
@@ -19,6 +24,53 @@ export default function Home() {
     return name.split(" ")[0];
   };
 
+  const live = async () => {
+    // STEP 1: Create a Deepgram client using the API key
+    const deepgram = createClient(process.env.DEEPGRAM_API_KEY);
+  
+    // STEP 2: Create a live transcription connection
+    const connection = deepgram.listen.live({
+      model: "nova-2",
+      language: "en-US",
+      smart_format: true,
+    });
+  
+    // STEP 3: Listen for events from the live transcription connection
+    connection.on(LiveTranscriptionEvents.Open, () => {
+      connection.on(LiveTranscriptionEvents.Close, () => {
+        console.log("Connection closed.");
+      });
+  
+      connection.on(LiveTranscriptionEvents.Transcript, (data) => {
+        const transcript = data.channel.alternatives[0].transcript;
+        console.log("Transcript:", transcript);
+
+        socket.emit('transcription', transcript);
+      });
+  
+      connection.on(LiveTranscriptionEvents.Metadata, (data) => {
+        console.log(data);
+      });
+  
+      connection.on(LiveTranscriptionEvents.Error, (err) => {
+        console.error(err);
+      });
+  
+      // STEP 4: Fetch the audio stream and send it to the live transcription connection
+      fetch(url)
+        .then((r) => r.body)
+        .then((res: any) => {
+          res.on("readable", () => {
+            connection.send(res.read());
+          });
+        });
+    });
+  };
+
+  useEffect(() => {
+    live();
+  }, []);
+
   // // Redirect unauthenticated users to login page
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -29,6 +81,7 @@ export default function Home() {
   // Socket event listeners for real-time updates
   useEffect(() => {
     socket.on("join", (userId) => {
+      live();
       setActiveUsers((prevActiveUsers) => [...prevActiveUsers, userId]);
     });
 
