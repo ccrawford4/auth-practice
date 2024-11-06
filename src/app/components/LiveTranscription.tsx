@@ -44,7 +44,6 @@ const LiveTranscription = () => {
       socket.onmessage = (message) => {
         const received = JSON.parse(message.data);
         const transcript = received.channel.alternatives[0].transcript;
-        setTranscript((prevTranscript) => prevTranscript + ' ' + transcript);
         console.log('Transcript:', transcript);
       }
       setIsListening(true);
